@@ -58,7 +58,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public boolean onMarkerClick(Marker marker) {
                 // When a marker is clicked, the title (the owner of the toilet) is selected
                 String nameOfMarker = marker.getTitle();
-
+                return true;
 
             }
         });
