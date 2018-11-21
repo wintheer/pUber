@@ -1,5 +1,6 @@
 package come.has.winther.puber;
 
+import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
@@ -7,16 +8,23 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.ArrayList;
+import java.util.Locale;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+    private ArrayList<LatLng> locations;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        locations = BackgroundService.getToiletsNearby(new LatLng(56.158, 10.2));
         setContentView(R.layout.activity_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -39,8 +47,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
-        LatLng denmark = new LatLng(55.9397, 9.5156);
-        mMap.addMarker(new MarkerOptions().position(denmark).title("Marker in Denmark"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(denmark));
+        LatLng denmark = new LatLng(56.158, 10.2);
+        float zoomLevel = 16.0f;
+        mMap.addMarker(new MarkerOptions().position(denmark).title("This is you!"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(denmark, zoomLevel));
+        setMarkers(googleMap, locations);
+
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                // When a marker is clicked, the title (the owner of the toilet) is selected
+                String nameOfMarker = marker.getTitle();
+
+
+            }
+        });
+    }
+
+    public void setMarkers(GoogleMap googleMap, ArrayList<LatLng> latLongs) {
+        for (int i = 0; i < latLongs.size(); i++) {
+            googleMap.addMarker(new MarkerOptions()
+                    .position(latLongs.get(i))
+                    .title("Some shithole")
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.usericon)));
+        }
     }
 }
