@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "948922141641",
+    "firebase_url": "https://puber-dca80.firebaseio.com",
+    "project_id": "puber-dca80",
+    "storage_bucket": "puber-dca80.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:948922141641:android:8b03f4dc1170adfa",
+        "android_client_info": {
+          "package_name": "come.has.winther.puber"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "948922141641-s23ibl0rbv85m9hc9nrn6cq2rggcgu1l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAslwIF7mvlXqLFZDfgDdReUD2ZZL43yjk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
