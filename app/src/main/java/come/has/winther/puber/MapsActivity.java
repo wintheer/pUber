@@ -1,9 +1,13 @@
 package come.has.winther.puber;
 
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -14,22 +18,39 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
+    private String DEBUG = "MapsActivity";
+
     private GoogleMap mMap;
-    private ArrayList<LatLng> locations;
+    private ArrayList<User> locations;
+    private Location mCurrentLocation;
+
+    // For getting location of user
+    private FusedLocationProviderClient mFusedLocationClient;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        locations = BackgroundService.getToiletsNearby(new LatLng(56.158, 10.2));
         setContentView(R.layout.activity_maps);
+
+        locations = BackgroundService.getToiletsNearby(new LatLng(56.158, 10.2));
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+
+
+        Location comparison = new Location("");
+        comparison.setLatitude(56.158);
+        comparison.setLongitude(10.2);
+
+        Utilities.getClosestToilet(locations, comparison);
     }
 
 
@@ -49,27 +70,40 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Add a marker in Sydney and move the camera
         LatLng denmark = new LatLng(56.158, 10.2);
         float zoomLevel = 16.0f;
+        setMarkers(locations);
         mMap.addMarker(new MarkerOptions().position(denmark).title("This is you!"));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(denmark, zoomLevel));
-        setMarkers(googleMap, locations);
 
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
                 // When a marker is clicked, the title (the owner of the toilet) is selected
                 String nameOfMarker = marker.getTitle();
+
+                // Open a new fragment
+                // TODO THIS IS WHERE TROELS PUTS HIS CODE TO OPEN A NEW FRAGMENT
+
+                // Returns true so that default behavior does not occur
+                // (move to the marker and an info windows appears
                 return true;
 
             }
         });
     }
 
-    public void setMarkers(GoogleMap googleMap, ArrayList<LatLng> latLongs) {
-        for (int i = 0; i < latLongs.size(); i++) {
-            googleMap.addMarker(new MarkerOptions()
-                    .position(latLongs.get(i))
-                    .title("Some shithole")
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.usericon)));
+    public void setMarkers(ArrayList<User> usrs) {
+        MarkerOptions options = new MarkerOptions();
+        for (int i = 0; i < usrs.size(); i++) {
+            User currentUser = usrs.get(i);
+
+            options.position(new LatLng(currentUser.getLatitude(), currentUser.getLongitude()))
+                    .title(currentUser.getName())
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.usericon));
+
+            mMap.addMarker(options);
+
+            Log.d(DEBUG, "Added " + currentUser.getName() + " to map with coordinates: "
+            + "(" + currentUser.getLatitude() + ", " + currentUser.getLongitude() + ")");
         }
     }
 }

@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">pUber</string>
     <string name="title_activity_maps">Map</string>
+    <string name="nearest_toilet">Nearest Toilet</string>
 </resources>
