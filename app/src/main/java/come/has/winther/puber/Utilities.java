@@ -1,6 +1,10 @@
 package come.has.winther.puber;
 
+import android.content.Context;
 import android.location.Location;
+import android.location.LocationManager;
+import android.os.Build;
+import android.provider.Settings;
 
 import java.util.ArrayList;
 

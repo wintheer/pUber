@@ -8,6 +8,7 @@ import java.util.ArrayList;
 public class BackgroundService {
 
 
+
     //new LatLng(56.158, 10.2);
 
     public static ArrayList<User> getToiletsNearby(LatLng ownLocation) {
