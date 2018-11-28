@@ -1,5 +1,21 @@
 <resources>
     <string name="app_name">pUber</string>
     <string name="title_activity_maps">Map</string>
+    <string name="Write_review">Write Review</string>
+    <string name="See_more">See More</string>
+    <string name="Request_info">Request Info</string>
+    <string name="Adress">Adress</string>
+    <string name="Price">Price</string>
+    <string name="Info">Info</string>
+    <string name="Report">Report</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="writeYourReview">Write your review</string>
+    <string name="cancel">Cancel</string>
+    <string name="Submit">Submit</string>
+    <string name="Back">Back</string>
+
+
     <string name="nearest_toilet">Nearest Toilet</string>
 </resources>
