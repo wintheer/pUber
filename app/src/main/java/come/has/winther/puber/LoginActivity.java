@@ -1,5 +1,6 @@
 package come.has.winther.puber;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.support.annotation.NonNull;
@@ -46,6 +47,13 @@ public class LoginActivity extends AppCompatActivity {
 
     private final static int RC_SIGN_IN = 100;
 
+
+    //this get called from MapsActivity if the user is not signed in
+    @NonNull
+    public static Intent createIntent(@NonNull Context context) {
+        return new Intent(context, LoginActivity.class);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,7 +75,7 @@ public class LoginActivity extends AppCompatActivity {
     //start map activity when login-check reports success
     private void startSignedInActivity(@Nullable IdpResponse response) {
         //implement the createIntent method in MapsActivity
-        //startActivity(MapsActivity.createIntent(this, response));
+        startActivity(TestMapsActivity.createIntent(this, response));
     }
 
 
