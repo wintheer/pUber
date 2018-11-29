@@ -42,7 +42,7 @@ public class TestMapsActivity extends AppCompatActivity {
 
         IdpResponse response = getIntent().getParcelableExtra(ExtraConstants.IDP_RESPONSE);
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseFirestore db  = FirebaseFirestore.getInstance();
 
         populateUI(response);
 
