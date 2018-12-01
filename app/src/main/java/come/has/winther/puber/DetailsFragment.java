@@ -1,10 +1,8 @@
 package come.has.winther.puber;
 
-import android.content.Context;
-import android.net.Uri;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
+import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,68 +11,73 @@ import android.widget.TextView;
 
 // Fragment implementation is based on a tutorial from https://abhiandroid.com/ui/fragment
 
-public class DetailsFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    private OnFragmentInteractionListener mListener;
+public class DetailsFragment extends Fragment implements View.OnClickListener {
 
     public DetailsFragment() {
         // Required empty public constructor
     }
 
 
-    // TODO: Rename and change types and number of parameters
-    public static DetailsFragment newInstance(String param1, String param2) {
-        DetailsFragment fragment = new DetailsFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        // Inflate the layout for this fragment
+
+        View view = inflater.inflate(R.layout.fragment_details, container, false);
+
         // Fill textviews
-        TextView toiletNameText = getView().findViewById(R.id.tw_details_toiletName);
-        TextView infoText = getView().findViewById(R.id.tw_details_info);
-        TextView descriptionText = getView().findViewById(R.id.tw_detais_description);
-        TextView adressText = getView().findViewById(R.id.tw_details_adressField);
-        TextView priceText = getView().findViewById(R.id.tw_details_priceField);
+        TextView toiletNameText = view.findViewById(R.id.tw_details_toiletName);
+        TextView infoText = view.findViewById(R.id.tw_details_info);
+        TextView descriptionText = view.findViewById(R.id.tw_detais_description);
+        TextView adressText = view.findViewById(R.id.tw_details_adressField);
+        TextView priceText = view.findViewById(R.id.tw_details_priceField);
 
 
         // Set up button functionalities
-        Button seeMoreButton = (Button) getView().findViewById(R.id.button_details_seeMore);
-        seeMoreButton.setOnClickListener((View.OnClickListener) this);
+        Button seeMoreButton = (Button) view.findViewById(R.id.button_details_seeMore);
+        seeMoreButton.setOnClickListener(this);
 
-        Button writeReviewButton = (Button) getView().findViewById(R.id.button_details_writeReview);
-        writeReviewButton.setOnClickListener((View.OnClickListener) this);
+        Button writeReviewButton = (Button) view.findViewById(R.id.button_details_writeReview);
+        writeReviewButton.setOnClickListener(this);
 
-        Button requestInfoButton = (Button) getView().findViewById(R.id.button_detais_requestInfo);
-        requestInfoButton.setOnClickListener((View.OnClickListener) this);
+        Button requestInfoButton = (Button) view.findViewById(R.id.button_details_requestInfo);
+        requestInfoButton.setOnClickListener(this);
 
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_details, container, false);
+        Button reportButton = (Button) view.findViewById(R.id.button_details_report);
+        reportButton.setOnClickListener(this);
+
+        return view;
     }
 
+    @Override
+    public void onClick(View view) {
+        switch(view.getId()){
+            case R.id.button_details_seeMore:
+            replaceFragment(new SeeMoreFragment());
+                break;
+            case R.id.button_details_writeReview:
+            replaceFragment(new ReviewFragment());
+                break;
+            case R.id.button_details_requestInfo:
+            replaceFragment(new InfoFragment());
+                break;
+            case R.id.button_details_report:
+                //TODO make a report fragment or something
+
+                break;
+        }
+
+    }
+
+    private void replaceFragment(Fragment fragment){
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragmentFrameLayout, fragment );
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
   /*  // based on answer from Krupal Shah at https://stackoverflow.com/questions/32700818/how-to-open-a-fragment-on-button-click-from-a-fragment-in-android
     @Override
     public void onClick(View v) {
@@ -100,33 +103,5 @@ public class DetailsFragment extends Fragment {
     }
 
 */
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
 }
