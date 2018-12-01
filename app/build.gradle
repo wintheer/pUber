@@ -52,7 +52,7 @@ dependencies {
     implementation 'com.firebaseui:firebase-ui-storage:4.2.1'
 
     // Firebase notifications
-    compile 'com.google.firebase:firebase-messaging:10.2.1'
+    implementation 'com.google.firebase:firebase-messaging:10.2.1'
 
 }
 apply plugin: 'com.google.gms.google-services'
