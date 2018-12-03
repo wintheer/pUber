@@ -48,10 +48,14 @@ public class BackgroundService extends IntentService {
         return locationsToReturn;
     }
 
+
     @Override
     protected void onHandleIntent(Intent intent) {
         String dataString = intent.getDataString();
     }
+
+
+
 
     /**
      * Returns the username who is cloests to the given location
