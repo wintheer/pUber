@@ -51,9 +51,6 @@ public class TestMapsActivity extends AppCompatActivity {
     private void populateUI(@Nullable IdpResponse response) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-
         name.setText(user.getDisplayName());
-
-
     }
 }

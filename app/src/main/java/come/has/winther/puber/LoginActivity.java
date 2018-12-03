@@ -47,6 +47,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private final static int RC_SIGN_IN = 100;
 
+    //this class and its methods have been inspired by this
+
 
     //this get called from MapsActivity if the user is not signed in
     @NonNull
