@@ -1,4 +1,4 @@
-package come.has.winther.puber;
+package come.has.winther.puber.Fragments;
 
 import android.content.Context;
 import android.net.Uri;
@@ -8,11 +8,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import come.has.winther.puber.R;
+
 // Fragment implementation is based on a tutorial from https://abhiandroid.com/ui/fragment
 
-public class SeeMoreFragment extends Fragment {
+public class ReviewFragment extends Fragment {
 
-    public SeeMoreFragment() {
+
+    public ReviewFragment() {
         // Required empty public constructor
     }
 
@@ -21,7 +24,7 @@ public class SeeMoreFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_see_more, container, false);
+        return inflater.inflate(R.layout.fragment_review, container, false);
     }
 
 

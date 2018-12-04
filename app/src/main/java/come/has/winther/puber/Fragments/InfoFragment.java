@@ -1,4 +1,4 @@
-package come.has.winther.puber;
+package come.has.winther.puber.Fragments;
 
 import android.content.Context;
 import android.net.Uri;
@@ -7,6 +7,8 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import come.has.winther.puber.R;
 
 // Fragment implementation is based on a tutorial from https://abhiandroid.com/ui/fragment
 

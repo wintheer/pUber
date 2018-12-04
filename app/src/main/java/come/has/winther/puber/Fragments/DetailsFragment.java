@@ -1,4 +1,4 @@
-package come.has.winther.puber;
+package come.has.winther.puber.Fragments;
 
 import android.app.FragmentTransaction;
 import android.os.Bundle;
@@ -15,6 +15,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import come.has.winther.puber.Activities.MapsActivity;
+import come.has.winther.puber.Fragments.InfoFragment;
+import come.has.winther.puber.Fragments.ReviewFragment;
+import come.has.winther.puber.Fragments.SeeMoreFragment;
+import come.has.winther.puber.R;
+import come.has.winther.puber.Toilet;
 
 // Fragment implementation is based on a tutorial from https://abhiandroid.com/ui/fragment
 

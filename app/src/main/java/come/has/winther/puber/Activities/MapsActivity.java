@@ -1,4 +1,4 @@
-package come.has.winther.puber;
+package come.has.winther.puber.Activities;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -21,6 +21,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import come.has.winther.puber.Fragments.MyMapFragment;
+import come.has.winther.puber.R;
+import come.has.winther.puber.User;
+import come.has.winther.puber.Utilities;
 
 public class MapsActivity extends FragmentActivity implements MyMapFragment.OnDataPass {
 
