@@ -1,4 +1,4 @@
-package come.has.winther.puber;
+package come.has.winther.puber.Fragments;
 
 import android.app.FragmentTransaction;
 import android.os.Bundle;
@@ -16,7 +16,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.w3c.dom.Text;
+import come.has.winther.puber.Activities.MapsActivity;
+import come.has.winther.puber.Fragments.InfoFragment;
+import come.has.winther.puber.Fragments.ReviewFragment;
+import come.has.winther.puber.Fragments.SeeMoreFragment;
+import come.has.winther.puber.R;
+import come.has.winther.puber.Toilet;
 
 // Fragment implementation is based on a tutorial from https://abhiandroid.com/ui/fragment
 
@@ -26,22 +31,20 @@ public class DetailsFragment extends Fragment implements View.OnClickListener {
 
     private TextView toiletNameText, infoText, descriptionText, adressText, priceText;
     private Button seeMoreButton, writeReviewButton, requestInfoButton, reportButton;
-
-
+    private String currentEmail;
 
     public DetailsFragment() {
         // Required empty public constructor
     }
 
-
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        // Inflate the layout for this fragment
+        MapsActivity mapsActivity = (MapsActivity) getActivity();
+        currentEmail = mapsActivity.getChosenToilet();
 
+        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_details, container, false);
 
         // Fill textviews
@@ -72,7 +75,7 @@ public class DetailsFragment extends Fragment implements View.OnClickListener {
 
     private void populateTextFields() {
 
-        databaseRef = FirebaseDatabase.getInstance().getReference("toilets/kasperps95@gmail,com");
+        databaseRef = FirebaseDatabase.getInstance().getReference("toilets/" + currentEmail);
 
         databaseRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -117,6 +120,10 @@ public class DetailsFragment extends Fragment implements View.OnClickListener {
         transaction.addToBackStack(null);
         transaction.commit();
     }
+
+
+
+
   /*  // based on answer from Krupal Shah at https://stackoverflow.com/questions/32700818/how-to-open-a-fragment-on-button-click-from-a-fragment-in-android
     @Override
     public void onClick(View v) {

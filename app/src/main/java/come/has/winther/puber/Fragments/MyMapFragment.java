@@ -1,18 +1,15 @@
-package come.has.winther.puber;
+package come.has.winther.puber.Fragments;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
-import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,13 +19,10 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -36,7 +30,16 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
 
+import come.has.winther.puber.BackgroundService;
+import come.has.winther.puber.R;
+import come.has.winther.puber.Toilet;
+
 public class MyMapFragment extends Fragment  implements LocationListener{
+    // Interface for passing data between activity and this fragment.
+    public interface OnDataPass {
+        void onDataPass(String data);
+    }
+
     // Implementation based on Arshu's answer on https://stackoverflow.com/questions/19353255/how-to-put-google-maps-v2-on-a-fragment-using-viewpager
     private GoogleMap map;
     private ArrayList<Toilet> locations;
@@ -45,7 +48,7 @@ public class MyMapFragment extends Fragment  implements LocationListener{
     private FusedLocationProviderClient mFusedLocationClient;
 
     private String DEBUG = "MapsActivity";
-
+    private OnDataPass dataPasser;
 
     MapView mapView;
     public MyMapFragment(){
@@ -77,6 +80,28 @@ public class MyMapFragment extends Fragment  implements LocationListener{
                 }
             }
         });
+    }
+
+
+    /**
+     * This works on API >= 23
+     */
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        Log.d(DEBUG, "onAttach has been called");
+        dataPasser = (OnDataPass) context;
+    }
+
+
+    /**
+     * This works on API < 23
+     */
+    @Override
+    public void onAttach(Activity context) {
+        super.onAttach(context);
+        Log.d(DEBUG, "onAttach has been called");
+        dataPasser = (OnDataPass) context;
     }
 
     @Override
@@ -114,13 +139,10 @@ public class MyMapFragment extends Fragment  implements LocationListener{
                         String nameOfMarker = marker.getTitle();
 
                         // Open a new fragment
-                        // TODO THIS IS WHERE TROELS PUTS HIS CODE TO OPEN A NEW FRAGMENT
-                        Intent intent = new Intent();
-                        intent.putExtra("markerName",nameOfMarker);
+                        passData(nameOfMarker);
                         loadFragment(new DetailsFragment());
 
-                        // Returns true so that default behavior does not occur
-                        // (move to the marker and an info windows appears
+                        // Returns true so that default behavior does not occur (move to the marker and an info windows appears
                         return true;
 
                     }
@@ -154,25 +176,29 @@ public class MyMapFragment extends Fragment  implements LocationListener{
     @Override
     public void onResume() {
         super.onResume();
-        mapView.onResume();
+        if (mapView != null)
+            mapView.onResume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mapView.onPause();
+        if (mapView != null)
+            mapView.onPause();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mapView.onDestroy();
+        if (mapView != null)
+            mapView.onDestroy();
     }
 
     @Override
     public void onLowMemory() {
         super.onLowMemory();
-        mapView.onLowMemory();
+        if (mapView != null)
+            mapView.onLowMemory();
     }
 
     @Override
@@ -194,6 +220,11 @@ public class MyMapFragment extends Fragment  implements LocationListener{
     public void onProviderDisabled(String provider) {
 
     }
+
+    public void passData(String data) {
+        dataPasser.onDataPass(data);
+    }
+
     // Fragment implementation is based on a tutorial from https://abhiandroid.com/ui/fragment
     private void loadFragment(Fragment fragment) {
 // create a FragmentManager
