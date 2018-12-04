@@ -77,7 +77,7 @@ public class LoginActivity extends AppCompatActivity {
     //start map activity when login-check reports success
     private void startSignedInActivity(@Nullable IdpResponse response) {
         //implement the createIntent method in MapsActivity
-        startActivity(TestMapsActivity.createIntent(this, response));
+        startActivity(MapsActivity.createIntent(this, response));
     }
 
 

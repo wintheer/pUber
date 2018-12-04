@@ -9,9 +9,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 // Fragment implementation is based on a tutorial from https://abhiandroid.com/ui/fragment
 
 public class DetailsFragment extends Fragment implements View.OnClickListener {
+
+    private TextView toiletNameText, infoText, descriptionText, adressText, priceText;
 
     public DetailsFragment() {
         // Required empty public constructor
@@ -29,12 +33,14 @@ public class DetailsFragment extends Fragment implements View.OnClickListener {
         View view = inflater.inflate(R.layout.fragment_details, container, false);
 
         // Fill textviews
-        TextView toiletNameText = view.findViewById(R.id.tw_details_toiletName);
-        TextView infoText = view.findViewById(R.id.tw_details_info);
-        TextView descriptionText = view.findViewById(R.id.tw_detais_description);
-        TextView adressText = view.findViewById(R.id.tw_details_adressField);
-        TextView priceText = view.findViewById(R.id.tw_details_priceField);
+        toiletNameText = view.findViewById(R.id.tw_details_toiletName);
+        infoText = view.findViewById(R.id.tw_details_info);
+        descriptionText = view.findViewById(R.id.tw_detais_description);
+        adressText = view.findViewById(R.id.tw_details_adressField);
+        priceText = view.findViewById(R.id.tw_details_priceField);
 
+        //Kasper code starts here:
+        populateTextFields();
 
         // Set up button functionalities
         Button seeMoreButton = (Button) view.findViewById(R.id.button_details_seeMore);
@@ -50,6 +56,10 @@ public class DetailsFragment extends Fragment implements View.OnClickListener {
         reportButton.setOnClickListener(this);
 
         return view;
+    }
+
+    private void populateTextFields() {
+
     }
 
     @Override

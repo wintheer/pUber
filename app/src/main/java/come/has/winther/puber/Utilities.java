@@ -30,4 +30,12 @@ public class Utilities {
             // Permission has already been granted
         }
     }
+
+    public static String encodeUserEmail(String userEmail){
+        return userEmail.replace(".",",");
+    }
+
+    public static String decodeUserEmail(String userEmail){
+        return userEmail.replace(",",".");
+    }
 }

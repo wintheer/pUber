@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.location.Location;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
@@ -16,6 +17,9 @@ import java.util.ArrayList;
  * //new LatLng(56.158, 10.2); for testing
  */
 public class BackgroundService extends IntentService {
+
+    //private DatabaseHandler rootRef = FirebaseDatabase.getInstance().getReference();
+    //private conditionRef
 
 
     /**
@@ -31,6 +35,7 @@ public class BackgroundService extends IntentService {
     public static ArrayList<User> getToiletsNearby(LatLng ownLocation) {
         ArrayList<User> locationsToReturn = new ArrayList<>();
 
+        /*
         User userOne = new User("Kasper", 56.157085, 10.207051);
         User userTwo = new User("Troels", 56.158599, 10.203087);
         User userThree = new User("Abdul", 56.158898, 10.197226);
@@ -44,6 +49,7 @@ public class BackgroundService extends IntentService {
         locationsToReturn.add(userFour);
         locationsToReturn.add(userFive);
         locationsToReturn.add(userSix);
+        */
 
         return locationsToReturn;
     }

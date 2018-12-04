@@ -4,13 +4,21 @@ import android.location.Location;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 
-@IgnoreExtraProperties
 public class User {
 
     private double longitude, latitude;
     private String name;
     private Location toiletLocation;
     private String address;
+    private String info;
+    private float price;
+
+    private String eMailAddress;
+
+    public User(String name, String eMailAddress) {
+        this.name = name;
+        this.eMailAddress = eMailAddress;
+    }
 
     public void setName(String name) {
         this.name = name;
@@ -40,17 +48,6 @@ public class User {
         this.price = price;
     }
 
-    private String info;
-    private float price;
-
-    public User(String name, double latitude, double longitude) {
-        this.name = name;
-        this.longitude = longitude;
-        this.latitude = latitude;
-        toiletLocation = new Location(name);
-        toiletLocation.setLatitude(latitude);
-        toiletLocation.setLongitude(longitude);
-    }
 
     public double getLongitude() {
         return this.longitude;
@@ -66,5 +63,13 @@ public class User {
 
     public Location getToiletLocation() {
         return toiletLocation;
+    }
+
+    public String geteMailAddress() {
+        return eMailAddress;
+    }
+
+    public void seteMailAddress(String eMailAddress) {
+        this.eMailAddress = eMailAddress;
     }
 }

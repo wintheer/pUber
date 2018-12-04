@@ -3,6 +3,7 @@ package come.has.winther.puber;
 import android.Manifest;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -79,7 +80,7 @@ public class MyMapFragment extends Fragment  implements LocationListener{
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
         mapView = view.findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
@@ -114,6 +115,8 @@ public class MyMapFragment extends Fragment  implements LocationListener{
 
                         // Open a new fragment
                         // TODO THIS IS WHERE TROELS PUTS HIS CODE TO OPEN A NEW FRAGMENT
+                        Intent intent = new Intent();
+                        intent.putExtra("markerName",nameOfMarker);
                         loadFragment(new DetailsFragment());
 
                         // Returns true so that default behavior does not occur

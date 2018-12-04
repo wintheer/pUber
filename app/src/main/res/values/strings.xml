@@ -4,9 +4,9 @@
     <string name="Write_review">Write Review</string>
     <string name="See_more">See More</string>
     <string name="Request_info">Request Info</string>
-    <string name="Adress">Adress</string>
-    <string name="Price">Price</string>
-    <string name="Info">Info</string>
+    <string name="Address">Address:</string>
+    <string name="Price">Price:</string>
+    <string name="Info">Info:</string>
     <string name="Report">Report</string>
 
     <!-- TODO: Remove or change this placeholder text -->
