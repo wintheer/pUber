@@ -3,11 +3,18 @@ package come.has.winther.puber;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.w3c.dom.Text;
 
@@ -15,7 +22,12 @@ import org.w3c.dom.Text;
 
 public class DetailsFragment extends Fragment implements View.OnClickListener {
 
+    DatabaseReference databaseRef;
+
     private TextView toiletNameText, infoText, descriptionText, adressText, priceText;
+    private Button seeMoreButton, writeReviewButton, requestInfoButton, reportButton;
+
+
 
     public DetailsFragment() {
         // Required empty public constructor
@@ -34,7 +46,7 @@ public class DetailsFragment extends Fragment implements View.OnClickListener {
 
         // Fill textviews
         toiletNameText = view.findViewById(R.id.tw_details_toiletName);
-        infoText = view.findViewById(R.id.tw_details_info);
+        infoText = view.findViewById(R.id.tw_details_infoField);
         descriptionText = view.findViewById(R.id.tw_detais_description);
         adressText = view.findViewById(R.id.tw_details_adressField);
         priceText = view.findViewById(R.id.tw_details_priceField);
@@ -43,22 +55,36 @@ public class DetailsFragment extends Fragment implements View.OnClickListener {
         populateTextFields();
 
         // Set up button functionalities
-        Button seeMoreButton = (Button) view.findViewById(R.id.button_details_seeMore);
+        seeMoreButton = (Button) view.findViewById(R.id.button_details_seeMore);
         seeMoreButton.setOnClickListener(this);
 
-        Button writeReviewButton = (Button) view.findViewById(R.id.button_details_writeReview);
+        writeReviewButton = (Button) view.findViewById(R.id.button_details_writeReview);
         writeReviewButton.setOnClickListener(this);
 
-        Button requestInfoButton = (Button) view.findViewById(R.id.button_details_requestInfo);
+        requestInfoButton = (Button) view.findViewById(R.id.button_details_requestInfo);
         requestInfoButton.setOnClickListener(this);
 
-        Button reportButton = (Button) view.findViewById(R.id.button_details_report);
+        reportButton = (Button) view.findViewById(R.id.button_details_report);
         reportButton.setOnClickListener(this);
 
         return view;
     }
 
     private void populateTextFields() {
+
+        databaseRef = FirebaseDatabase.getInstance().getReference("toilets");
+
+        databaseRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
     }
 
