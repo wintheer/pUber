@@ -5,6 +5,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
@@ -21,12 +22,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class MapsActivity extends FragmentActivity{
+public class MapsActivity extends FragmentActivity implements MyMapFragment.OnDataPass {
 
     private static final String DEBUG = "MapsActivity";
     DatabaseReference databaseRef;
     FirebaseUser currentUser;
     private String encodedEmail, displayName;
+
+    private String chosenToilet;
 
     @NonNull
     public static Intent createIntent(@NonNull Context context, @Nullable IdpResponse response) {
@@ -47,21 +50,27 @@ public class MapsActivity extends FragmentActivity{
             return;
         }
         addUserToDb();
-        loadFragment(new MyMapFragment());
+
+
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            // The phone is in landscape mode, load the two fragments next to one another
+            Log.d(DEBUG, "Phone is in landscape mode.");
+        }
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            // The phone is in portrait mode, load one fragment
+            Log.d(DEBUG, "Phone is in portrait mode.");
+            loadFragment(new MyMapFragment());
+        }
 
     }
 
-
     private void addUserToDb() {
-        FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
+        final FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
 
         Log.d(DEBUG, fbUser.getEmail());
 
         displayName = fbUser.getDisplayName();
         encodedEmail = Utilities.encodeUserEmail(fbUser.getEmail());
-
-
-
 
         final User dbUser = new User(displayName, fbUser.getEmail());
 
@@ -72,11 +81,11 @@ public class MapsActivity extends FragmentActivity{
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     // The user already exists
+                    Log.d(DEBUG, fbUser.getEmail() + "Already exists");
                 } else {
                     // The user does not exist, so lets create him!!
                     databaseRef.child(encodedEmail).setValue(dbUser);
                     Log.d(DEBUG, "Created user with ID: " + encodedEmail);
-
                 }
             }
 
@@ -100,4 +109,15 @@ public class MapsActivity extends FragmentActivity{
     }
 
 
+    @Override
+    public void onDataPass(String data) {
+        Log.d(DEBUG, "data received from fragment: " + data);
+        // If the data contains an @ it is an email address
+        if (data.contains("@"))
+            this.chosenToilet = data;
+    }
+
+    public String getChosenToilet() {
+        return chosenToilet;
+    }
 }

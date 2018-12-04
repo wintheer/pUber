@@ -1,6 +1,7 @@
 package come.has.winther.puber;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
@@ -37,6 +38,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import java.util.ArrayList;
 
 public class MyMapFragment extends Fragment  implements LocationListener{
+    // Interface for passing data between activity and this fragment.
+    public interface OnDataPass {
+        void onDataPass(String data);
+    }
+
     // Implementation based on Arshu's answer on https://stackoverflow.com/questions/19353255/how-to-put-google-maps-v2-on-a-fragment-using-viewpager
     private GoogleMap map;
     private ArrayList<Toilet> locations;
@@ -45,7 +51,7 @@ public class MyMapFragment extends Fragment  implements LocationListener{
     private FusedLocationProviderClient mFusedLocationClient;
 
     private String DEBUG = "MapsActivity";
-
+    private OnDataPass dataPasser;
 
     MapView mapView;
     public MyMapFragment(){
@@ -77,6 +83,28 @@ public class MyMapFragment extends Fragment  implements LocationListener{
                 }
             }
         });
+    }
+
+
+    /**
+     * This works on API >= 23
+     */
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        Log.d(DEBUG, "onAttach has been called");
+        dataPasser = (OnDataPass) context;
+    }
+
+
+    /**
+     * This works on API < 23
+     */
+    @Override
+    public void onAttach(Activity context) {
+        super.onAttach(context);
+        Log.d(DEBUG, "onAttach has been called");
+        dataPasser = (OnDataPass) context;
     }
 
     @Override
@@ -114,13 +142,10 @@ public class MyMapFragment extends Fragment  implements LocationListener{
                         String nameOfMarker = marker.getTitle();
 
                         // Open a new fragment
-                        // TODO THIS IS WHERE TROELS PUTS HIS CODE TO OPEN A NEW FRAGMENT
-                        Intent intent = new Intent();
-                        intent.putExtra("markerName",nameOfMarker);
+                        passData(nameOfMarker);
                         loadFragment(new DetailsFragment());
 
-                        // Returns true so that default behavior does not occur
-                        // (move to the marker and an info windows appears
+                        // Returns true so that default behavior does not occur (move to the marker and an info windows appears
                         return true;
 
                     }
@@ -194,6 +219,11 @@ public class MyMapFragment extends Fragment  implements LocationListener{
     public void onProviderDisabled(String provider) {
 
     }
+
+    public void passData(String data) {
+        dataPasser.onDataPass(data);
+    }
+
     // Fragment implementation is based on a tutorial from https://abhiandroid.com/ui/fragment
     private void loadFragment(Fragment fragment) {
 // create a FragmentManager

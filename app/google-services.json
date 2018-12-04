@@ -15,6 +15,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "948922141641-sjre0sddfii1ci2us9u1bu3f0fk78uek.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "come.has.winther.puber",
+            "certificate_hash": "447672e65c2c84f4eaddbf41a8c6498cb1cf4fab"
+          }
+        },
+        {
+          "client_id": "948922141641-f0mbp9s0ceegv6tnp8dv6a8loeucn2ua.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "come.has.winther.puber",
+            "certificate_hash": "aaaecbc8b630450a054dccfc5437d87c5d79e2ae"
+          }
+        },
+        {
           "client_id": "948922141641-s23ibl0rbv85m9hc9nrn6cq2rggcgu1l.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,8 +45,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "948922141641-s23ibl0rbv85m9hc9nrn6cq2rggcgu1l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2

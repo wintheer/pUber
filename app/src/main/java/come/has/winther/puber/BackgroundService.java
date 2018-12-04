@@ -35,7 +35,7 @@ public class BackgroundService extends IntentService {
     public static ArrayList<Toilet> getToiletsNearby(LatLng ownLocation) {
         ArrayList<Toilet> locationsToReturn = new ArrayList<>();
 
-        Toilet t1 = new Toilet("kasperps95@gmail.com","Kaspers poopdumpster","You will like this","Åbogade 34, 8200 Aarhus N","$2","Don't poop near the cat",56.157085,10.207051);
+        Toilet t1 = new Toilet("kasperps95@gmail.com","kasperps95@gmail,com","You will like this","Åbogade 34, 8200 Aarhus N","$2","Don't poop near the cat",56.157085,10.207051);
         /*
         User userOne = new User("Kasper", 56.157085, 10.207051);
         User userTwo = new User("Troels", 56.158599, 10.203087);
