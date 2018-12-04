@@ -4,6 +4,7 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,19 +59,24 @@ public class DetailsFragment extends Fragment implements View.OnClickListener {
         populateTextFields();
 
         // Set up button functionalities
-        seeMoreButton = (Button) view.findViewById(R.id.button_details_seeMore);
-        seeMoreButton.setOnClickListener(this);
-
-        writeReviewButton = (Button) view.findViewById(R.id.button_details_writeReview);
-        writeReviewButton.setOnClickListener(this);
 
         requestInfoButton = (Button) view.findViewById(R.id.button_details_requestInfo);
         requestInfoButton.setOnClickListener(this);
 
-        reportButton = (Button) view.findViewById(R.id.button_details_report);
-        reportButton.setOnClickListener(this);
+        reportButton = view.findViewById(R.id.button_details_report);
+        reportButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                report();
+            }
+        });
 
         return view;
+    }
+
+    private void report() {
+        Snackbar sb = Snackbar.make(getActivity().findViewById(android.R.id.content), "Toilet has been reported",Snackbar.LENGTH_SHORT);
+        sb.show();
     }
 
     private void populateTextFields() {
@@ -97,12 +103,6 @@ public class DetailsFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         switch(view.getId()){
-            case R.id.button_details_seeMore:
-            replaceFragment(new SeeMoreFragment());
-                break;
-            case R.id.button_details_writeReview:
-            replaceFragment(new ReviewFragment());
-                break;
             case R.id.button_details_requestInfo:
             replaceFragment(new InfoFragment());
                 break;
