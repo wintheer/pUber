@@ -39,7 +39,7 @@ import java.util.ArrayList;
 public class MyMapFragment extends Fragment  implements LocationListener{
     // Implementation based on Arshu's answer on https://stackoverflow.com/questions/19353255/how-to-put-google-maps-v2-on-a-fragment-using-viewpager
     private GoogleMap map;
-    private ArrayList<User> locations;
+    private ArrayList<Toilet> locations;
     private Location mCurrentLocation;
     private boolean gpsEnabled = false;
     private FusedLocationProviderClient mFusedLocationClient;
@@ -134,19 +134,19 @@ public class MyMapFragment extends Fragment  implements LocationListener{
     }
 
 
-    public void setMarkers(ArrayList<User> usrs) {
+    public void setMarkers(ArrayList<Toilet> usrs) {
         MarkerOptions options = new MarkerOptions();
         for (int i = 0; i < usrs.size(); i++) {
-            User currentUser = usrs.get(i);
+            Toilet currentToilet = usrs.get(i);
 
-            options.position(new LatLng(currentUser.getLatitude(), currentUser.getLongitude()))
-                    .title(currentUser.getName())
+            options.position(new LatLng(currentToilet.getLatitude(), currentToilet.getLongitude()))
+                    .title(currentToilet.getName())
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.usericon));
 
             map.addMarker(options);
 
-            Log.d(DEBUG, "Added " + currentUser.getName() + " to map with coordinates: "
-                    + "(" + currentUser.getLatitude() + ", " + currentUser.getLongitude() + ")");
+            Log.d(DEBUG, "Added " + currentToilet.getName() + " to map with coordinates: "
+                    + "(" + currentToilet.getLatitude() + ", " + currentToilet.getLongitude() + ")");
         }
     }
 

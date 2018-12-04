@@ -72,12 +72,15 @@ public class DetailsFragment extends Fragment implements View.OnClickListener {
 
     private void populateTextFields() {
 
-        databaseRef = FirebaseDatabase.getInstance().getReference("toilets");
+        databaseRef = FirebaseDatabase.getInstance().getReference("toilets/kasperps95@gmail,com");
 
         databaseRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
+                Toilet toilet = dataSnapshot.getValue(Toilet.class);
+                toiletNameText.setText(toilet.getName());
+                descriptionText.setText(toilet.getDescription());
+                adressText.setText(toilet.getAddress());
             }
 
             @Override

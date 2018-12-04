@@ -1,16 +1,28 @@
 package come.has.winther.puber;
 
+import android.location.Location;
+
 public class Toilet {
 
     private String owner, name, description, address, price, info;
+    private double longitude, latitude;
+    private Location toiletLocation;
 
-    public Toilet(String owner, String name, String description, String address, String price, String info) {
+
+
+    public Toilet(String owner, String name, String description, String address, String price, String info, double latitude, double longitude) {
         this.owner = owner;
         this.name = name;
         this.description = description;
         this.address = address;
         this.price = price;
         this.info = info;
+        this.longitude = longitude;
+        this.latitude = latitude;
+    }
+
+    public Toilet(){
+        //this is a no-argument constructor. It is needed
     }
 
     public String getOwner() {
@@ -59,5 +71,21 @@ public class Toilet {
 
     public void setInfo(String info) {
         this.info = info;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
     }
 }
