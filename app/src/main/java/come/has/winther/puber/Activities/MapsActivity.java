@@ -1,21 +1,16 @@
 package come.has.winther.puber.Activities;
 
-import android.Manifest;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.location.Location;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.firebase.ui.auth.IdpResponse;
@@ -27,6 +22,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import come.has.winther.puber.Fragments.MyMapFragment;
 import come.has.winther.puber.R;
@@ -38,7 +34,7 @@ public class MapsActivity extends FragmentActivity implements MyMapFragment.OnDa
     private static final String DEBUG = "MapsActivity";
     DatabaseReference databaseRef;
     FirebaseUser currentUser;
-    private String encodedEmail, displayName;
+    private String encodedEmail, displayName, token;
 
     private String chosenToilet;
     private Location currentLocation;
@@ -66,6 +62,8 @@ public class MapsActivity extends FragmentActivity implements MyMapFragment.OnDa
             return;
         }
 
+        Log.d(DEBUG,"FCM: "+FirebaseInstanceId.getInstance().getToken());
+
         addUserToDb();
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -87,8 +85,9 @@ public class MapsActivity extends FragmentActivity implements MyMapFragment.OnDa
 
         displayName = fbUser.getDisplayName();
         encodedEmail = Utilities.encodeUserEmail(fbUser.getEmail());
+        token = FirebaseInstanceId.getInstance().getToken();
 
-        final User dbUser = new User(displayName, fbUser.getEmail());
+        final User dbUser = new User(displayName, token, fbUser.getEmail());
 
         databaseRef = FirebaseDatabase.getInstance().getReference("users");
 

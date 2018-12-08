@@ -2,8 +2,6 @@ package come.has.winther.puber;
 
 import android.location.Location;
 
-import com.google.firebase.database.IgnoreExtraProperties;
-
 public class User {
 
     private double longitude, latitude;
@@ -12,11 +10,13 @@ public class User {
     private String address;
     private String info;
     private float price;
+    private String token;
 
     private String eMailAddress;
 
-    public User(String name, String eMailAddress) {
+    public User(String name, String token, String eMailAddress) {
         this.name = name;
+        this.token = token;
         this.eMailAddress = eMailAddress;
     }
 
@@ -71,5 +71,13 @@ public class User {
 
     public void seteMailAddress(String eMailAddress) {
         this.eMailAddress = eMailAddress;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }
