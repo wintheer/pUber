@@ -26,8 +26,6 @@ public class LoginActivity extends AppCompatActivity {
     private SignInButton signInButton;
     private FirebaseAuth mAuth;
     private GoogleApiClient mGoogleApiClient;
-    private TextView welcomeLabel;
-
     private final static int RC_SIGN_IN = 100;
 
     //this class and its methods have been inspired by this
@@ -44,10 +42,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        welcomeLabel = findViewById(R.id.welcome);
-
         signIn();
-
     }
 
     public void signIn(){
