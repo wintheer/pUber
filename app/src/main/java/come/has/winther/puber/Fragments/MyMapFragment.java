@@ -3,7 +3,10 @@ package come.has.winther.puber.Fragments;
 import android.Manifest;
 import android.app.Activity;
 import android.app.FragmentTransaction;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -37,16 +40,14 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.ArrayList;
 
 import come.has.winther.puber.Activities.MapsActivity;
-import come.has.winther.puber.BackgroundService;
 import come.has.winther.puber.R;
 import come.has.winther.puber.Toilet;
-import come.has.winther.puber.Utilities;
-import okhttp3.internal.Util;
 
 public class MyMapFragment extends Fragment {
 
     private LocationManager locationManager;
     private LocationListener locationListener;
+    private BroadcastReceiver broadcastReceiver;
 
     // Interface for passing data between activity and this fragment.
     public interface OnDataPass {
@@ -66,6 +67,8 @@ public class MyMapFragment extends Fragment {
 
     private String DEBUG = "MyMapFragment";
     private OnDataPass dataPasser;
+
+    private ArrayList<Marker> addedMarkers;
     private FirebaseUser loggedInUser;
 
     private Button buttonGetNearest, buttonProfile;
@@ -92,6 +95,8 @@ public class MyMapFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+        addedMarkers = new ArrayList<>();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
 
         mFusedLocationClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
@@ -176,7 +181,7 @@ public class MyMapFragment extends Fragment {
         mapView.onCreate(savedInstanceState);
         mapView.onResume();
 
-        locations = BackgroundService.getToiletsNearby(new LatLng(56.158, 10.2));
+        locations = mapsActivity.getToilets();
 
         try {
             MapsInitializer.initialize(getActivity().getApplicationContext());
@@ -188,7 +193,7 @@ public class MyMapFragment extends Fragment {
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 map = googleMap;
-                setMarkers(locations);
+                setMarkers(mapsActivity.getToilets());
                 if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                         && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     Log.d(DEBUG, "User did accept Location services!");
@@ -242,15 +247,26 @@ public class MyMapFragment extends Fragment {
         MarkerOptions options = new MarkerOptions();
         for (int i = 0; i < usrs.size(); i++) {
             Toilet currentToilet = usrs.get(i);
-
+            if (!addedMarkers.isEmpty()) {
+                // This code will slow down the app a lot when there are many users on pUber
+                // Sees if a marker with the same name is added to the map, if so, remove him from the map
+                for (int j = 0; j < addedMarkers.size(); j++) {
+                    if (usrs.get(i).getOwner().equals(addedMarkers.get(j).getTitle())) {
+                        // remove the marker
+                        addedMarkers.get(j).remove();
+                    }
+                }
+            }
             options.position(new LatLng(currentToilet.getLatitude(), currentToilet.getLongitude()))
                     .title(currentToilet.getOwner())
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.usericon));
 
-            map.addMarker(options);
+            Marker m = map.addMarker(options);
 
             Log.d(DEBUG, "Added " + currentToilet.getOwner() + " to map with coordinates: "
                     + "(" + currentToilet.getLatitude() + ", " + currentToilet.getLongitude() + ")");
+            // List for removing duplicates
+            addedMarkers.add(m);
         }
     }
 
@@ -259,6 +275,20 @@ public class MyMapFragment extends Fragment {
         super.onResume();
         if (mapView != null)
             mapView.onResume();
+
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getAction().equals(MapsActivity.BROADCAST_DATA_CHANGED)) {
+                    // Received message that toilet has been added to list
+                    Log.d(DEBUG, "Received broadcast data.");
+                    locations = mapsActivity.getToilets();
+                    setMarkers(locations);
+                }
+            }
+        };
+        IntentFilter filter = new IntentFilter(MapsActivity.BROADCAST_DATA_CHANGED);
+        getActivity().registerReceiver(broadcastReceiver, filter);
     }
 
     @Override
@@ -266,6 +296,8 @@ public class MyMapFragment extends Fragment {
         super.onPause();
         if (mapView != null)
             mapView.onPause();
+
+        getActivity().unregisterReceiver(broadcastReceiver);
     }
 
     @Override
