@@ -67,7 +67,7 @@ public class MapsActivity extends FragmentActivity implements MyMapFragment.OnDa
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Log.d("Data changed toilets: ", dataSnapshot.toString());
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    toilets.add(new Toilet(ds.getValue()))
+
                 }
             }
 
