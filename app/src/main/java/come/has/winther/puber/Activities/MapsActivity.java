@@ -24,20 +24,27 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 
+import java.util.ArrayList;
+import java.util.Map;
+
 import come.has.winther.puber.Fragments.MyMapFragment;
 import come.has.winther.puber.R;
+import come.has.winther.puber.Toilet;
 import come.has.winther.puber.User;
 import come.has.winther.puber.Utilities;
 
 public class MapsActivity extends FragmentActivity implements MyMapFragment.OnDataPass {
 
     private static final String DEBUG = "MapsActivity";
+    public static final String BROADCAST_DATA_CHANGED = "DATA_CHANGED";
     DatabaseReference databaseRef;
     FirebaseUser currentUser;
     private String encodedEmail, displayName, token;
 
     private String chosenToilet;
     private Location currentLocation;
+    private DatabaseReference toiletRef;
+    private ArrayList<Toilet> toilets;
 
     @NonNull
     public static Intent createIntent(@NonNull Context context, @Nullable IdpResponse response) {
@@ -49,11 +56,32 @@ public class MapsActivity extends FragmentActivity implements MyMapFragment.OnDa
         return this.currentUser;
     }
 
+    private void addToilet(String owner, String address, String price, String info, double latitude, double longitude) {
+        Toilet toiletToAdd = new Toilet(owner, address, price, info, latitude, longitude);
+        if (!toilets.isEmpty()) {
+            for(int i = 0; i < toilets.size(); i++) {
+                if (toilets.get(i).getOwner().equals(owner)) {
+                    toilets.remove(i);
+                }
+            }
+            Log.d("Added:", toiletToAdd.toString());
+            toilets.add(toiletToAdd);
+        } else {
+            Log.d("Added:", toiletToAdd.toString());
+            toilets.add(toiletToAdd);
+        }
+
+        Intent broadcastIntent = new Intent();
+        broadcastIntent.setAction(BROADCAST_DATA_CHANGED);
+
+        sendBroadcast(broadcastIntent);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        toilets = new ArrayList<>();
         setContentView(R.layout.activity_maps);
-
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
         if(currentUser == null){
@@ -62,7 +90,30 @@ public class MapsActivity extends FragmentActivity implements MyMapFragment.OnDa
             return;
         }
 
-        Log.d(DEBUG,"FCM: "+FirebaseInstanceId.getInstance().getToken());
+        toiletRef = FirebaseDatabase.getInstance().getReference("toilets");
+
+        toiletRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    String toiletOwner = ds.getKey();
+                    String toiletAddress = (String) ds.child("address").getValue();
+                    String toiletPrice = (String) ds.child("price").getValue();
+                    String info = (String) ds.child("info").getValue();
+                    double toiletLatitude = (double) ds.child("latitude").getValue();
+                    double toiletLongitude = (double) ds.child("longitude").getValue();
+
+                    addToilet(toiletOwner, toiletAddress, toiletPrice, info, toiletLatitude, toiletLongitude);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d("BUM", "NO PERMISSION");
+            }
+        });
+
+        Log.d(DEBUG,"FCM: "+ FirebaseInstanceId.getInstance().getToken());
 
         addUserToDb();
 
@@ -75,7 +126,10 @@ public class MapsActivity extends FragmentActivity implements MyMapFragment.OnDa
             Log.d(DEBUG, "Phone is in portrait mode.");
             loadFragment(new MyMapFragment());
         }
+    }
 
+    public ArrayList<Toilet> getToilets() {
+        return this.toilets;
     }
 
     private void addUserToDb() {
@@ -132,7 +186,6 @@ public class MapsActivity extends FragmentActivity implements MyMapFragment.OnDa
         // If the data contains an @ it is an email address
         if (data.contains("@"))
             this.chosenToilet = data;
-
     }
 
     /**

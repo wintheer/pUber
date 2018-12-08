@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="Write_review">Skriv anmeldelse</string>
+    <string name="See_more">Se Mere</string>
+    <string name="Address">Adresse:</string>
+    <string name="Price">Pris:</string>
+    <string name="Info">Info:</string>
+    <string name="Report">Rapportér</string>
+    <string name="writeYourReview">Skriv din anmeldelse</string>
+    <string name="cancel">Annuller</string>
+    <string name="Submit">Indsend</string>
+    <string name="Back">Tilbage</string>
+    <string name="basicDescription">Dette er et toilet.</string>
+    <string name="nearest_toilet">Tætteste toilet</string>
+    <string name="profile">Profil</string>
+    <string name="description">Beskrivelse:</string>
+    <string name="saveValues">Gem Værdier</string>
+    <string name="yourToilet">Mit Toilet</string>
+    <string name="addToilet">Tilføj Toilet</string>
+    <string name="addDescription">Tilføj en beskrivelse til dit toilet.</string>
+    <string name="addAddress">Skriv din adresse her.</string>
+    <string name="fillOutInformation">Beskriv venligst dit toilet og tilføj en adresse.</string>
+    <string name="yourLocation">Dette er dig!</string>
+    <string name="notEnoughPermissions">Ikke nok android tilladelser!</string>
+    <string name="Request_usage">Anmod om Brug</string>
+</resources>
