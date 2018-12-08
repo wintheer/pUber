@@ -1,19 +1,15 @@
 package come.has.winther.puber;
 
+import android.content.res.Resources;
 import android.location.Location;
 
 public class Toilet {
 
     private String owner, name, description, address, price, info;
     private double longitude, latitude;
-    private Location toiletLocation;
-
-
-
-    public Toilet(String owner, String name, String description, String address, String price, String info, double latitude, double longitude) {
+    
+    public Toilet(String owner, String address, String price, String info, double latitude, double longitude) {
         this.owner = owner;
-        this.name = name;
-        this.description = description;
         this.address = address;
         this.price = price;
         this.info = info;
@@ -33,13 +29,6 @@ public class Toilet {
         this.owner = owner;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public String getDescription() {
         return description;

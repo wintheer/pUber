@@ -9,13 +9,21 @@
     <string name="Info">Info:</string>
     <string name="Report">Report</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="writeYourReview">Write your review</string>
     <string name="cancel">Cancel</string>
     <string name="Submit">Submit</string>
     <string name="Back">Back</string>
 
+    <string name="basicDescription">This is a toilet.</string>
     <string name="nearest_toilet">Nearest Toilet</string>
-    <string name="default_notification_channel_id">1</string>
+    <string name="profile">profile</string>
+    <string name="description">Description:</string>
+    <string name="saveValues">Save Values</string>
+    <string name="yourToilet">Your Toilet</string>
+    <string name="addToilet">Add Toilet</string>
+    <string name="addDescription">Add a description to your toilet.</string>
+    <string name="addAddress">Write your address here.</string>
+    <string name="fillOutInformation">Please describe your toilet and add an address.</string>
+    <string name="yourLocation">This is you!</string>
+    <string name="notEnoughPermissions">Not enough permissions!</string>
 </resources>
