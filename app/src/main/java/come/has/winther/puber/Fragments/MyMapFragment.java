@@ -4,16 +4,21 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.app.Fragment;
+
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -27,61 +32,51 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 
+import come.has.winther.puber.Activities.MapsActivity;
 import come.has.winther.puber.BackgroundService;
 import come.has.winther.puber.R;
 import come.has.winther.puber.Toilet;
+import come.has.winther.puber.Utilities;
+import okhttp3.internal.Util;
 
-public class MyMapFragment extends Fragment  implements LocationListener{
+public class MyMapFragment extends Fragment {
+
+    private LocationManager locationManager;
+    private LocationListener locationListener;
+
     // Interface for passing data between activity and this fragment.
     public interface OnDataPass {
         void onDataPass(String data);
+
+        void onDataPass(Location location);
     }
 
     // Implementation based on Arshu's answer on https://stackoverflow.com/questions/19353255/how-to-put-google-maps-v2-on-a-fragment-using-viewpager
     private GoogleMap map;
     private ArrayList<Toilet> locations;
     private Location mCurrentLocation;
-    private boolean gpsEnabled = false;
+
+    float zoomLevel = 14;
+    Marker ownMarker;
     private FusedLocationProviderClient mFusedLocationClient;
 
-    private String DEBUG = "MapsActivity";
+    private String DEBUG = "MyMapFragment";
     private OnDataPass dataPasser;
+    private FirebaseUser loggedInUser;
+
+    private Button buttonGetNearest, buttonProfile;
+    private FusedLocationProviderClient getmFusedLocationClient;
 
     MapView mapView;
-    public MyMapFragment(){
+    MapsActivity mapsActivity;
+
+    public MyMapFragment() {
 
     }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        locations = BackgroundService.getToiletsNearby(new LatLng(56.158, 10.2));
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        mFusedLocationClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                if (location != null) {
-                    // We know know the user's location
-                    mCurrentLocation = location;
-                }
-            }
-        });
-    }
-
 
     /**
      * This works on API >= 23
@@ -93,6 +88,75 @@ public class MyMapFragment extends Fragment  implements LocationListener{
         dataPasser = (OnDataPass) context;
     }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
+
+        mFusedLocationClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                // Successfully received the last known location
+                if (location != null) {
+                    mCurrentLocation = location;
+                    changeLocation(mCurrentLocation);
+                }
+            }
+        });
+
+        mapsActivity = (MapsActivity) getActivity();
+        loggedInUser = mapsActivity.getCurrentUser();
+        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                Log.d("Location:", location.toString());
+                mCurrentLocation = location;
+                changeLocation(location);
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
+        };
+
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Log.d(DEBUG, "User did not give location permissions!");
+            return;
+        }
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+    }
+
+    private void changeLocation(Location location) {
+        if (ownMarker != null) {
+            ownMarker.remove();
+        }
+        dataPasser.onDataPass(location);
+        double dLatitude = location.getLatitude();
+        double dLongitude = location.getLongitude();
+
+        if (map != null) {
+            ownMarker = map.addMarker(new MarkerOptions().position(new LatLng(dLatitude, dLongitude)).
+                    title(getResources().getString(R.string.yourLocation))
+                    .icon(BitmapDescriptorFactory.defaultMarker()));
+            map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(dLatitude, dLongitude), zoomLevel));
+        }
+    }
 
     /**
      * This works on API < 23
@@ -104,6 +168,7 @@ public class MyMapFragment extends Fragment  implements LocationListener{
         dataPasser = (OnDataPass) context;
     }
 
+
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
@@ -111,6 +176,7 @@ public class MyMapFragment extends Fragment  implements LocationListener{
         mapView.onCreate(savedInstanceState);
         mapView.onResume();
 
+        locations = BackgroundService.getToiletsNearby(new LatLng(56.158, 10.2));
 
         try {
             MapsInitializer.initialize(getActivity().getApplicationContext());
@@ -118,19 +184,18 @@ public class MyMapFragment extends Fragment  implements LocationListener{
             e.printStackTrace();
         }
 
-
         mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
-            public void onMapReady(GoogleMap gMap) {
-                map = gMap;
-
-                //map.setMyLocationEnabled(true);
-
-                LatLng denmark = new LatLng(56.158, 10.2);
-                map.addMarker(new MarkerOptions().position(denmark).title("This is you").snippet("Why are you even here?"));
-                float zoomLevel = 16.0f;
+            public void onMapReady(GoogleMap googleMap) {
+                map = googleMap;
                 setMarkers(locations);
-                map.addMarker(new MarkerOptions().position(denmark).title("This is you!"));
+                if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                        && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    Log.d(DEBUG, "User did accept Location services!");
+                    Toast.makeText(getActivity(), getResources().getString(R.string.notEnoughPermissions), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                //map.setMyLocationEnabled(true);
 
                 map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                     @Override
@@ -138,16 +203,33 @@ public class MyMapFragment extends Fragment  implements LocationListener{
                         // When a marker is clicked, the title (the owner of the toilet) is selected
                         String nameOfMarker = marker.getTitle();
 
-                        // Open a new fragment
-                        passData(nameOfMarker);
-                        loadFragment(new DetailsFragment());
+                        // If the user presses himself, nothing will happen
+                        if (!nameOfMarker.equals(getResources().getString(R.string.yourLocation))) {
+                            // Open a new fragment
+                            passData(nameOfMarker);
+                            passData(mCurrentLocation);
+                            loadFragment(new DetailsFragment());
+                        }
 
                         // Returns true so that default behavior does not occur (move to the marker and an info windows appears
                         return true;
-
                     }
                 });
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(denmark, zoomLevel));
+            }
+        });
+
+        buttonProfile = view.findViewById(R.id.btn_maps_ownProfile);
+        buttonProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Open fragment for profile
+                loadFragment(new ProfileFragment());
+            }
+        });
+        buttonGetNearest = view.findViewById(R.id.btn_maps_nearestToilet);
+        buttonGetNearest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
             }
         });
@@ -162,16 +244,15 @@ public class MyMapFragment extends Fragment  implements LocationListener{
             Toilet currentToilet = usrs.get(i);
 
             options.position(new LatLng(currentToilet.getLatitude(), currentToilet.getLongitude()))
-                    .title(currentToilet.getName())
+                    .title(currentToilet.getOwner())
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.usericon));
 
             map.addMarker(options);
 
-            Log.d(DEBUG, "Added " + currentToilet.getName() + " to map with coordinates: "
+            Log.d(DEBUG, "Added " + currentToilet.getOwner() + " to map with coordinates: "
                     + "(" + currentToilet.getLatitude() + ", " + currentToilet.getLongitude() + ")");
         }
     }
-
 
     @Override
     public void onResume() {
@@ -192,6 +273,8 @@ public class MyMapFragment extends Fragment  implements LocationListener{
         super.onDestroy();
         if (mapView != null)
             mapView.onDestroy();
+
+        locationManager.removeUpdates(locationListener);
     }
 
     @Override
@@ -201,28 +284,12 @@ public class MyMapFragment extends Fragment  implements LocationListener{
             mapView.onLowMemory();
     }
 
-    @Override
-    public void onLocationChanged(Location location) {
-
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
-    }
-
     public void passData(String data) {
         dataPasser.onDataPass(data);
+    }
+
+    public void passData(Location location) {
+        dataPasser.onDataPass(location);
     }
 
     // Fragment implementation is based on a tutorial from https://abhiandroid.com/ui/fragment

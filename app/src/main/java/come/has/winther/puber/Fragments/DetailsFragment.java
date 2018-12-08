@@ -1,6 +1,7 @@
 package come.has.winther.puber.Fragments;
 
 import android.app.FragmentTransaction;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.annotation.NonNull;
@@ -17,9 +18,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import come.has.winther.puber.Activities.MapsActivity;
-import come.has.winther.puber.Fragments.InfoFragment;
-import come.has.winther.puber.Fragments.ReviewFragment;
-import come.has.winther.puber.Fragments.SeeMoreFragment;
 import come.has.winther.puber.R;
 import come.has.winther.puber.Toilet;
 
@@ -41,6 +39,7 @@ public class DetailsFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         MapsActivity mapsActivity = (MapsActivity) getActivity();
         currentEmail = mapsActivity.getChosenToilet();
 
@@ -81,7 +80,7 @@ public class DetailsFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Toilet toilet = dataSnapshot.getValue(Toilet.class);
-                toiletNameText.setText(toilet.getName());
+                toiletNameText.setText(toilet.getOwner());
                 descriptionText.setText(toilet.getDescription());
                 adressText.setText(toilet.getAddress());
             }

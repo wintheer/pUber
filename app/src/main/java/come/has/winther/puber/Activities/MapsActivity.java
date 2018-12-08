@@ -1,15 +1,21 @@
 package come.has.winther.puber.Activities;
 
+import android.Manifest;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.location.Location;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.firebase.ui.auth.IdpResponse;
@@ -35,11 +41,16 @@ public class MapsActivity extends FragmentActivity implements MyMapFragment.OnDa
     private String encodedEmail, displayName;
 
     private String chosenToilet;
+    private Location currentLocation;
 
     @NonNull
     public static Intent createIntent(@NonNull Context context, @Nullable IdpResponse response) {
         return new Intent().setClass(context, MapsActivity.class)
                 .putExtra(ExtraConstants.IDP_RESPONSE, response);
+    }
+
+    public FirebaseUser getCurrentUser() {
+        return this.currentUser;
     }
 
     @Override
@@ -54,8 +65,8 @@ public class MapsActivity extends FragmentActivity implements MyMapFragment.OnDa
             finish();
             return;
         }
-        addUserToDb();
 
+        addUserToDb();
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             // The phone is in landscape mode, load the two fragments next to one another
@@ -113,16 +124,34 @@ public class MapsActivity extends FragmentActivity implements MyMapFragment.OnDa
         fragmentTransaction.commit(); // save the changes
     }
 
-
+    /**
+     * For passing user email
+     */
     @Override
     public void onDataPass(String data) {
         Log.d(DEBUG, "data received from fragment: " + data);
         // If the data contains an @ it is an email address
         if (data.contains("@"))
             this.chosenToilet = data;
+
+    }
+
+    /**
+     * For passing current location
+     */
+    @Override
+    public void onDataPass(Location location) {
+        Log.d(DEBUG, "data received from fragment: " + location.toString());
+        // If the data contains an @ it is an email address
+            this.currentLocation = location;
+
     }
 
     public String getChosenToilet() {
         return chosenToilet;
+    }
+
+    public Location getCurrentLocation() {
+        return this.currentLocation;
     }
 }
