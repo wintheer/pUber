@@ -2,9 +2,11 @@ package come.has.winther.puber.Fragments;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
@@ -99,52 +101,9 @@ public class MyMapFragment extends Fragment {
         addedMarkers = new ArrayList<>();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
 
-        mFusedLocationClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                // Successfully received the last known location
-                if (location != null) {
-                    mCurrentLocation = location;
-                    changeLocation(mCurrentLocation);
-                }
-            }
-        });
-
         mapsActivity = (MapsActivity) getActivity();
         loggedInUser = mapsActivity.getCurrentUser();
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-
-        locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-                Log.d("Location:", location.toString());
-                mCurrentLocation = location;
-                changeLocation(location);
-            }
-
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-
-            }
-
-            @Override
-            public void onProviderEnabled(String provider) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(String provider) {
-
-            }
-        };
-
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Log.d(DEBUG, "User did not give location permissions!");
-            return;
-        }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
     }
 
     private void changeLocation(Location location) {
@@ -276,6 +235,65 @@ public class MyMapFragment extends Fragment {
         if (mapView != null)
             mapView.onResume();
 
+        // This GPS check is copied from lenik's answer on:
+        // https://stackoverflow.com/questions/10311834/how-to-check-if-location-services-are-enabled
+        if( !locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle(R.string.gps_not_found_title);  // GPS not found
+            builder.setMessage(R.string.gps_not_found_message); // Want to enable?
+            builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    getActivity().startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                }
+            });
+            builder.setNegativeButton(R.string.no, null);
+            builder.create().show();
+            return;
+        }
+
+        mFusedLocationClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                // Successfully received the last known location
+                if (location != null) {
+                    mCurrentLocation = location;
+                    changeLocation(mCurrentLocation);
+                }
+            }
+        });
+
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                Log.d("Location:", location.toString());
+                mCurrentLocation = location;
+                changeLocation(location);
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
+        };
+
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Log.d(DEBUG, "User did not give location permissions!");
+            return;
+        }
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+
         broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -297,7 +315,8 @@ public class MyMapFragment extends Fragment {
         if (mapView != null)
             mapView.onPause();
 
-        getActivity().unregisterReceiver(broadcastReceiver);
+        if (broadcastReceiver != null)
+            getActivity().unregisterReceiver(broadcastReceiver);
     }
 
     @Override
