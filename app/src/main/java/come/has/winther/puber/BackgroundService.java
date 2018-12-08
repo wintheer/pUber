@@ -18,9 +18,6 @@ import java.util.ArrayList;
  */
 public class BackgroundService extends IntentService {
 
-    //private DatabaseHandler rootRef = FirebaseDatabase.getInstance().getReference();
-    //private conditionRef
-
 
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.

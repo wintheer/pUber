@@ -1,21 +1,16 @@
 package come.has.winther.puber.Activities;
 
-import android.Manifest;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.location.Location;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.firebase.ui.auth.IdpResponse;
@@ -28,8 +23,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 import come.has.winther.puber.Fragments.MyMapFragment;
 import come.has.winther.puber.R;
+import come.has.winther.puber.Toilet;
 import come.has.winther.puber.User;
 import come.has.winther.puber.Utilities;
 
@@ -40,6 +40,8 @@ public class MapsActivity extends FragmentActivity implements MyMapFragment.OnDa
     FirebaseUser currentUser;
     private String encodedEmail, displayName;
 
+    private ArrayList<Toilet> toilets;
+    DatabaseReference toiletRef;
     private String chosenToilet;
     private Location currentLocation;
 
@@ -57,6 +59,23 @@ public class MapsActivity extends FragmentActivity implements MyMapFragment.OnDa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        toiletRef = FirebaseDatabase.getInstance().getReference().child("toilets");
+
+        toiletRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.d("Data changed toilets: ", dataSnapshot.toString());
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    toilets.add(new Toilet(ds.getValue()))
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -90,7 +109,7 @@ public class MapsActivity extends FragmentActivity implements MyMapFragment.OnDa
 
         final User dbUser = new User(displayName, fbUser.getEmail());
 
-        databaseRef = FirebaseDatabase.getInstance().getReference("users");
+        databaseRef = FirebaseDatabase.getInstance().getReference("toilets");
 
         databaseRef.child(encodedEmail).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -135,6 +154,8 @@ public class MapsActivity extends FragmentActivity implements MyMapFragment.OnDa
             this.chosenToilet = data;
 
     }
+
+
 
     /**
      * For passing current location
