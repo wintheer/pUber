@@ -17,4 +17,5 @@
     <string name="Back">Back</string>
 
     <string name="nearest_toilet">Nearest Toilet</string>
+    <string name="default_notification_channel_id">1</string>
 </resources>

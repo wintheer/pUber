@@ -3,15 +3,19 @@ package come.has.winther.puber.Activities;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.Context;
+import android.content.ServiceConnection;
 import android.content.res.Configuration;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.firebase.client.Firebase;
 import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.util.ExtraConstants;
 import com.google.firebase.auth.FirebaseAuth;
@@ -21,7 +25,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 
+import come.has.winther.puber.BackgroundService;
 import come.has.winther.puber.Fragments.MyMapFragment;
 import come.has.winther.puber.R;
 import come.has.winther.puber.User;
@@ -36,6 +42,11 @@ public class MapsActivity extends FragmentActivity implements MyMapFragment.OnDa
 
     private String chosenToilet;
 
+    private BackgroundService bgService;
+    private ServiceConnection serviceConnection;
+
+    boolean isBound = false;
+
     @NonNull
     public static Intent createIntent(@NonNull Context context, @Nullable IdpResponse response) {
         return new Intent().setClass(context, MapsActivity.class)
@@ -46,6 +57,13 @@ public class MapsActivity extends FragmentActivity implements MyMapFragment.OnDa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        //bind to service
+        //bindToService();
+
+        //databaseRef.child
+
+        Log.d(DEBUG,"FCM: "+FirebaseInstanceId.getInstance().getToken());
 
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -67,6 +85,14 @@ public class MapsActivity extends FragmentActivity implements MyMapFragment.OnDa
             loadFragment(new MyMapFragment());
         }
 
+    }
+
+
+
+
+    private void bindToService() {
+        Intent i = new Intent(this, BackgroundService.class);
+        bindService(i, connection, Context.BIND_AUTO_CREATE);
     }
 
     private void addUserToDb() {
@@ -112,6 +138,25 @@ public class MapsActivity extends FragmentActivity implements MyMapFragment.OnDa
 
         fragmentTransaction.commit(); // save the changes
     }
+
+    private void startBGservice(){
+        //encodedEmail
+    }
+
+    private ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            BackgroundService.LocalBinder binder = (BackgroundService.LocalBinder) service;
+            bgService = binder.getService();
+            isBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            isBound = false;
+        }
+    };
+
 
 
     @Override
