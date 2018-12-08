@@ -1,21 +1,23 @@
 package come.has.winther.puber.Activities;
 
+import android.Manifest;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.ComponentName;
 import android.content.Intent;
 import android.content.Context;
-import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.os.IBinder;
+import android.location.Location;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import com.firebase.client.Firebase;
 import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.util.ExtraConstants;
 import com.google.firebase.auth.FirebaseAuth;
@@ -25,9 +27,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.iid.FirebaseInstanceId;
 
-import come.has.winther.puber.BackgroundService;
 import come.has.winther.puber.Fragments.MyMapFragment;
 import come.has.winther.puber.R;
 import come.has.winther.puber.User;
@@ -41,11 +41,7 @@ public class MapsActivity extends FragmentActivity implements MyMapFragment.OnDa
     private String encodedEmail, displayName;
 
     private String chosenToilet;
-
-    private BackgroundService bgService;
-    private ServiceConnection serviceConnection;
-
-    boolean isBound = false;
+    private Location currentLocation;
 
     @NonNull
     public static Intent createIntent(@NonNull Context context, @Nullable IdpResponse response) {
@@ -53,17 +49,14 @@ public class MapsActivity extends FragmentActivity implements MyMapFragment.OnDa
                 .putExtra(ExtraConstants.IDP_RESPONSE, response);
     }
 
+    public FirebaseUser getCurrentUser() {
+        return this.currentUser;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-
-        //bind to service
-        //bindToService();
-
-        //databaseRef.child
-
-        Log.d(DEBUG,"FCM: "+FirebaseInstanceId.getInstance().getToken());
 
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -72,8 +65,8 @@ public class MapsActivity extends FragmentActivity implements MyMapFragment.OnDa
             finish();
             return;
         }
-        addUserToDb();
 
+        addUserToDb();
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             // The phone is in landscape mode, load the two fragments next to one another
@@ -85,14 +78,6 @@ public class MapsActivity extends FragmentActivity implements MyMapFragment.OnDa
             loadFragment(new MyMapFragment());
         }
 
-    }
-
-
-
-
-    private void bindToService() {
-        Intent i = new Intent(this, BackgroundService.class);
-        bindService(i, connection, Context.BIND_AUTO_CREATE);
     }
 
     private void addUserToDb() {
@@ -139,35 +124,34 @@ public class MapsActivity extends FragmentActivity implements MyMapFragment.OnDa
         fragmentTransaction.commit(); // save the changes
     }
 
-    private void startBGservice(){
-        //encodedEmail
-    }
-
-    private ServiceConnection connection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            BackgroundService.LocalBinder binder = (BackgroundService.LocalBinder) service;
-            bgService = binder.getService();
-            isBound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            isBound = false;
-        }
-    };
-
-
-
+    /**
+     * For passing user email
+     */
     @Override
     public void onDataPass(String data) {
         Log.d(DEBUG, "data received from fragment: " + data);
         // If the data contains an @ it is an email address
         if (data.contains("@"))
             this.chosenToilet = data;
+
+    }
+
+    /**
+     * For passing current location
+     */
+    @Override
+    public void onDataPass(Location location) {
+        Log.d(DEBUG, "data received from fragment: " + location.toString());
+        // If the data contains an @ it is an email address
+            this.currentLocation = location;
+
     }
 
     public String getChosenToilet() {
         return chosenToilet;
+    }
+
+    public Location getCurrentLocation() {
+        return this.currentLocation;
     }
 }
