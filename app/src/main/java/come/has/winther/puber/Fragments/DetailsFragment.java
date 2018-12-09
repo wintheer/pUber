@@ -27,6 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import come.has.winther.puber.Activities.MapsActivity;
 import come.has.winther.puber.R;
 import come.has.winther.puber.Toilet;
+import come.has.winther.puber.Utilities;
 
 // Fragment implementation is based on a tutorial from https://abhiandroid.com/ui/fragment
 
@@ -64,6 +65,7 @@ public class DetailsFragment extends Fragment {
 
         //get database reference
         databaseRef = FirebaseDatabase.getInstance().getReference("toilets/" + currentEmail);
+        owner = databaseRef.getKey();
         ownerRef = FirebaseDatabase.getInstance().getReference("users/" + owner);
 
         //populate UI
@@ -94,15 +96,12 @@ public class DetailsFragment extends Fragment {
         Snackbar sb = Snackbar.make(getActivity().findViewById(android.R.id.content), "Usage request sent to "+toiletNameText.getText(),Snackbar.LENGTH_SHORT);
         sb.show();
 
-        owner = databaseRef.getKey();
-
-
-
         ownerRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                token = (String) dataSnapshot.child("token").getValue();
-                Log.w(TAG,"Token: "+token);
+                Object o = dataSnapshot.child("token").getValue();
+                //token = dataSnapshot.child("token").getValue();
+                Log.w(TAG,"Token: " + o.toString());
             }
 
             @Override
@@ -114,7 +113,7 @@ public class DetailsFragment extends Fragment {
 
 
         Log.w(TAG,ownerRef.child("token").toString());
-        Log.w(TAG,"Owner of toilet is: "+owner);
+        Log.w(TAG,"Owner of toilet is: " + owner);
 
         //notification test code
 

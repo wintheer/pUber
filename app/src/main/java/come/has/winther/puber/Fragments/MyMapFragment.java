@@ -1,6 +1,7 @@
 package come.has.winther.puber.Fragments;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.FragmentTransaction;
@@ -44,6 +45,8 @@ import java.util.ArrayList;
 import come.has.winther.puber.Activities.MapsActivity;
 import come.has.winther.puber.R;
 import come.has.winther.puber.Toilet;
+
+import static come.has.winther.puber.Activities.MapsActivity.BROADCAST_DATA_CHANGED;
 
 public class MyMapFragment extends Fragment {
 
@@ -152,6 +155,7 @@ public class MyMapFragment extends Fragment {
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 map = googleMap;
+                Log.d("Map:","is ready!");
                 setMarkers(mapsActivity.getToilets());
                 if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                         && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -229,11 +233,26 @@ public class MyMapFragment extends Fragment {
         }
     }
 
+    @SuppressLint("MissingPermission")
     @Override
     public void onResume() {
         super.onResume();
         if (mapView != null)
             mapView.onResume();
+
+            broadcastReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    if (intent.getAction().equals(BROADCAST_DATA_CHANGED)) {
+                        // Received message that toilet has been added to list
+                        Log.d(DEBUG, "Received broadcast data.");
+                        locations = mapsActivity.getToilets();
+                        setMarkers(locations);
+                    }
+                }
+            };
+        IntentFilter filter = new IntentFilter(BROADCAST_DATA_CHANGED);
+        getActivity().registerReceiver(broadcastReceiver, filter);
 
         // This GPS check is copied from lenik's answer on:
         // https://stackoverflow.com/questions/10311834/how-to-check-if-location-services-are-enabled
@@ -258,6 +277,10 @@ public class MyMapFragment extends Fragment {
                 if (location != null) {
                     mCurrentLocation = location;
                     changeLocation(mCurrentLocation);
+                    Intent broadcastIntent = new Intent();
+                    broadcastIntent.setAction(BROADCAST_DATA_CHANGED);
+
+                    mapsActivity.sendBroadcast(broadcastIntent);
                 }
             }
         });
@@ -293,20 +316,6 @@ public class MyMapFragment extends Fragment {
         }
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-
-        broadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if (intent.getAction().equals(MapsActivity.BROADCAST_DATA_CHANGED)) {
-                    // Received message that toilet has been added to list
-                    Log.d(DEBUG, "Received broadcast data.");
-                    locations = mapsActivity.getToilets();
-                    setMarkers(locations);
-                }
-            }
-        };
-        IntentFilter filter = new IntentFilter(MapsActivity.BROADCAST_DATA_CHANGED);
-        getActivity().registerReceiver(broadcastReceiver, filter);
     }
 
     @Override
