@@ -44,7 +44,7 @@ public class DetailsFragment extends Fragment {
     private String loggedInUser;
 
     public DetailsFragment() {
-        // Required empty public constructor
+
     }
 
     @Override
@@ -71,8 +71,6 @@ public class DetailsFragment extends Fragment {
         owner = databaseRef.getKey();
 
         ownerRef = FirebaseDatabase.getInstance().getReference("users/" + currentEmail);
-
-
 
         //populate UI
         populateTextFields();
