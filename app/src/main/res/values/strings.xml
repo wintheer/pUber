@@ -37,4 +37,8 @@
     <string name="decline">Decline</string>
     <string name="accept">Accept</string>
     <string name="request">Request</string>
+    <string name="notRequested">Not requested yet.</string>
+    <string name="awaitingAcceptance">Waiting for acceptance.</string>
+    <string name="toiletReported">Toilet has been reported. Thanks for your help!</string>
+    <string name="requestedToSeeYourInformation">has requested to see your informaton. Will you accept him/her?</string>
 </resources>

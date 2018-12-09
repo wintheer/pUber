@@ -6,24 +6,18 @@ import android.os.Bundle;
 import android.app.Fragment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.RemoteMessage;
 
-
-import java.util.concurrent.atomic.AtomicInteger;
 
 import come.has.winther.puber.Activities.MapsActivity;
 import come.has.winther.puber.R;
@@ -37,7 +31,7 @@ public class DetailsFragment extends Fragment {
     DatabaseReference databaseRef;
     DatabaseReference ownerRef;
 
-    private TextView toiletNameText, infoText, descriptionText, adressText, priceText;
+    private TextView toiletNameText, infoText, descriptionText, addressText, priceText;
     private Button seeMoreButton, writeReviewButton, requestUsage, reportButton;
     private String currentEmail, token, owner;
     public static final String TAG = "DetailsFragment";
@@ -62,8 +56,7 @@ public class DetailsFragment extends Fragment {
         // Fill textviews
         toiletNameText = view.findViewById(R.id.tw_details_toiletName);
         infoText = view.findViewById(R.id.tw_details_infoField);
-        descriptionText = view.findViewById(R.id.tw_detais_description);
-        adressText = view.findViewById(R.id.tw_details_adressField);
+        addressText = view.findViewById(R.id.tw_details_adressField);
         priceText = view.findViewById(R.id.tw_details_priceField);
 
         //get database reference
@@ -72,9 +65,17 @@ public class DetailsFragment extends Fragment {
 
         ownerRef = FirebaseDatabase.getInstance().getReference("users/" + currentEmail);
 
-        //populate UI
-        populateTextFields();
+        ownerRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                toiletNameText.setText((String) dataSnapshot.child("name").getValue());
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
         // Set up button functionalities
 
         requestUsage = (Button) view.findViewById(R.id.button_details_requestInfo);
@@ -92,6 +93,23 @@ public class DetailsFragment extends Fragment {
                 report();
             }
         });
+        reportButton.setVisibility(View.GONE);
+
+        DatabaseReference acceptedRef = ownerRef.child("notification").child("acceptedUsername");
+
+        acceptedRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getValue().toString().equals(loggedInUser)) {
+                    populateTextFields();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         return view;
     }
@@ -103,23 +121,26 @@ public class DetailsFragment extends Fragment {
 
         ownerRef.child("notification").child("messageWaiting").setValue(true);
         ownerRef.child("notification").child("usernameWhoRequestedToilet").setValue(loggedInUser);
+
+        priceText.setText(getResources().getString(R.string.awaitingAcceptance));
+        infoText.setText(getResources().getString(R.string.awaitingAcceptance));
+        addressText.setText(getResources().getString(R.string.awaitingAcceptance));
     }
 
     private void report() {
-        Snackbar sb = Snackbar.make(getActivity().findViewById(android.R.id.content), "Toilet has been reported",Snackbar.LENGTH_SHORT);
+        Snackbar sb = Snackbar.make(getActivity().findViewById(android.R.id.content), getResources().getString(R.string.toiletReported),Snackbar.LENGTH_SHORT);
         sb.show();
     }
 
     private void populateTextFields() {
-
-
         databaseRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Toilet toilet = dataSnapshot.getValue(Toilet.class);
-                toiletNameText.setText(toilet.getOwner());
-                descriptionText.setText(toilet.getDescription());
-                adressText.setText(toilet.getAddress());
+                infoText.setText(toilet.getInfo());
+                addressText.setText(toilet.getAddress());
+                priceText.setText(toilet.getPrice());
+                reportButton.setVisibility(View.VISIBLE);
             }
 
             @Override

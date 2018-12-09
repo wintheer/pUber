@@ -12,7 +12,6 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
-import android.os.Debug;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
@@ -24,7 +23,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import come.has.winther.puber.Activities.MapsActivity;
+import come.has.winther.puber.Activities.AnswerActivity;
 
 import static android.app.Notification.VISIBILITY_PUBLIC;
 
@@ -121,7 +120,8 @@ public class NotificationService extends Service {
     private void sendNotification(String title, String messageBody) {
         Intent intent = new Intent(this, AnswerActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.putExtra("username", messageBody);
+        intent.putExtra("username", loggedInUser);
+        intent.putExtra("request", messageBody);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
@@ -151,5 +151,4 @@ public class NotificationService extends Service {
 
         notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
     }
-
 }

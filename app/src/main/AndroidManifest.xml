@@ -45,7 +45,7 @@
         </service>
         <!-- [END firebase_service] -->
 
-        <activity android:name=".AnswerActivity"></activity>
+        <activity android:name=".Activities.AnswerActivity"></activity>
     </application>
 
 </manifest>

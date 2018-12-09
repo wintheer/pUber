@@ -234,4 +234,12 @@ public class MapsActivity extends FragmentActivity implements MyMapFragment.OnDa
                 notificationServiceConnection, Context.BIND_AUTO_CREATE);
         Log.d(DEBUG, "bound to service.");
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (serviceBound)
+            unbindService(notificationServiceConnection);
+        serviceBound = false;
+    }
 }
