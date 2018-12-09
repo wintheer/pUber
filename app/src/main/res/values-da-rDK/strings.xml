@@ -23,4 +23,18 @@
     <string name="yourLocation">Dette er dig!</string>
     <string name="notEnoughPermissions">Ikke nok android tilladelser!</string>
     <string name="Request_usage">Anmod om Brug</string>
+    <string name="gps_not_found_title">Ingen GPS.</string>
+    <string name="gps_not_found_message">Vil du aktivere GPS?</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nej</string>
+    <string name="requestToilet">Nogen vil bruge dit toilet!</string>
+    <string name="requestSentTo">Anmodning sendt til:</string>
+    <string name="hasRequestedAccessToYourToilet">har anmodet om adgang til dit toilet.</string>
+    <string name="decline">Afslå</string>
+    <string name="accept">Acceptér</string>
+    <string name="request">Anmod</string>
+    <string name="notRequested">Ikke anmodet om endnu.</string>
+    <string name="awaitingAcceptance">Venter på acceptering</string>
+    <string name="toiletReported">Toilet er blevet rapporteret. Tak for din hjælp!</string>
+    <string name="requestedToSeeYourInformation">har anmodet om at se dine informationer. Vil du acceptere?</string>
 </resources>
