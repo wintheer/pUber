@@ -18,6 +18,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.RemoteMessage;
+import com.google.firebase.messaging.Message;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 import come.has.winther.puber.Activities.MapsActivity;
 import come.has.winther.puber.R;
@@ -110,6 +115,17 @@ public class DetailsFragment extends Fragment {
 
         Log.w(TAG,ownerRef.child("token").toString());
         Log.w(TAG,"Owner of toilet is: "+owner);
+
+        //notification test code
+
+        String registrationToken = "cMFdlpzM7Pk:APA91bFXagGYo-w7wN7R2PTax1mTWMk9JRnSy_jBRatihToBQ5XfE5hhQKaMFTvQEKpal_5aGiZ5i_T7OsRMSbZWwMvMg1Ejo2OmSXpKHqWrWb2jVv0vaXQd7MIeXikKnivU1yptGXeu";
+
+        // See documentation on defining a message payload.
+        Message message = Message.builder()
+                .putData("score", "850")
+                .putData("time", "2:45")
+                .setToken(registrationToken)
+                .build();
 
     }
 

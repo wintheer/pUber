@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
+
     compileSdkVersion 28
     defaultConfig {
         applicationId "come.has.winther.puber"
@@ -10,6 +11,7 @@ android {
         versionName "1.0"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        
     }
     buildTypes {
         release {
@@ -17,6 +19,8 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+
     productFlavors {
     }
 }
@@ -59,6 +63,8 @@ dependencies {
 
     // Firebase notifications
     implementation 'com.google.firebase:firebase-messaging:17.3.4'
+
+
 
 }
 apply plugin: 'com.google.gms.google-services'
