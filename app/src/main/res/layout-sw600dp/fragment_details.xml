@@ -10,19 +10,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="bobs toilet"
         android:textAlignment="center"
         android:textSize="30sp" />
 
-    <TextView
-        android:id="@+id/tw_detais_description"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        android:layout_weight="1"/>
-
 
     <LinearLayout
+        android:layout_marginTop="200dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -35,6 +28,7 @@
             android:layout_weight="1"
             android:text="@string/Address"
             android:textAlignment="center"
+            android:textSize="30sp"
             android:textStyle="bold" />
 
         <TextView
@@ -42,8 +36,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="TextView"
-            android:textAlignment="center" />
+            android:text="@string/notRequested"
+            android:textAlignment="center"
+            android:textSize="18sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -59,6 +54,7 @@
             android:layout_weight="1"
             android:text="@string/Price"
             android:textAlignment="center"
+            android:textSize="30sp"
             android:textStyle="bold" />
 
         <TextView
@@ -66,8 +62,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="TextView"
-            android:textAlignment="center" />
+            android:text="@string/notRequested"
+            android:textAlignment="center"
+            android:textSize="18sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -83,6 +80,7 @@
             android:layout_weight="1"
             android:text="@string/Info"
             android:textAlignment="center"
+            android:textSize="30sp"
             android:textStyle="bold" />
 
         <TextView
@@ -90,8 +88,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="TextView"
-            android:textAlignment="center" />
+            android:text="@string/notRequested"
+            android:textAlignment="center"
+            android:textSize="18sp" />
 
     </LinearLayout>
 
@@ -100,7 +99,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center|top"
-        android:text="@string/Request_usage" />
+        android:text="@string/Request_usage"
+        android:textSize="30sp" />
 
     <Button
         android:id="@+id/button_details_report"

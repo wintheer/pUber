@@ -194,14 +194,6 @@ public class MyMapFragment extends Fragment {
                 loadFragment(new ProfileFragment());
             }
         });
-        buttonGetNearest = view.findViewById(R.id.btn_maps_nearestToilet);
-        buttonGetNearest.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-
         return view;
     }
 

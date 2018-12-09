@@ -32,7 +32,7 @@ public class DetailsFragment extends Fragment {
     DatabaseReference ownerRef;
 
     private TextView toiletNameText, infoText, descriptionText, addressText, priceText;
-    private Button seeMoreButton, writeReviewButton, requestUsage, reportButton;
+    private Button requestUsageButton, reportButton;
     private String currentEmail, token, owner;
     public static final String TAG = "DetailsFragment";
     private String loggedInUser;
@@ -59,6 +59,7 @@ public class DetailsFragment extends Fragment {
         addressText = view.findViewById(R.id.tw_details_adressField);
         priceText = view.findViewById(R.id.tw_details_priceField);
 
+
         //get database reference
         databaseRef = FirebaseDatabase.getInstance().getReference("toilets/" + currentEmail);
         owner = databaseRef.getKey();
@@ -78,8 +79,8 @@ public class DetailsFragment extends Fragment {
         });
         // Set up button functionalities
 
-        requestUsage = (Button) view.findViewById(R.id.button_details_requestInfo);
-        requestUsage.setOnClickListener(new View.OnClickListener() {
+        requestUsageButton = (Button) view.findViewById(R.id.button_details_requestInfo);
+        requestUsageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 requestUsage();
@@ -141,6 +142,7 @@ public class DetailsFragment extends Fragment {
                 addressText.setText(toilet.getAddress());
                 priceText.setText(toilet.getPrice());
                 reportButton.setVisibility(View.VISIBLE);
+                requestUsageButton.setVisibility(View.GONE);
             }
 
             @Override

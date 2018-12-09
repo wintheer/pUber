@@ -1,6 +1,7 @@
 package come.has.winther.puber.Activities;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,6 +27,7 @@ public class AnswerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_answer);
 
         descriptionTextView = findViewById(R.id.tw_answer_description);
@@ -62,7 +64,7 @@ public class AnswerActivity extends AppCompatActivity {
 
             descriptionTextView.setText(descriptionToShow);
 
-            databaseRef = FirebaseDatabase.getInstance().getReference("users").child(usernameOfRequest)
+            databaseRef = FirebaseDatabase.getInstance().getReference("users").child(descriptionText)
                     .child("notification").child("acceptedUsername");
         }
     }

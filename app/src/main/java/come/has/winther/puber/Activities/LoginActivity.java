@@ -2,6 +2,7 @@ package come.has.winther.puber.Activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -41,6 +42,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         signIn();
     }
@@ -77,11 +79,6 @@ public class LoginActivity extends AppCompatActivity {
 
 
         selectedProviders.add(new AuthUI.IdpConfig.GoogleBuilder().build());
-
-        selectedProviders.add(new AuthUI.IdpConfig.EmailBuilder()
-                    .setRequireName(true)
-                    .setAllowNewAccounts(true)
-                    .build());
 
         return selectedProviders;
     }
