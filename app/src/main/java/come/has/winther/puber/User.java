@@ -21,7 +21,7 @@ public class User {
         this.name = name;
         this.token = token;
         this.eMailAddress = eMailAddress;
-        notification = new Notification(false, "none");
+        notification = new Notification(false, "none", "no");
     }
 
     public Notification getNotification() {

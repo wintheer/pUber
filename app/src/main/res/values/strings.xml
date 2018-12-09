@@ -33,4 +33,8 @@
     <string name="no">No</string>
     <string name="requestToilet">Someone wants to use your toilet!</string>
     <string name="requestSentTo">Request sent to:</string>
+    <string name="hasRequestedAccessToYourToilet">has requested access to your toilet.</string>
+    <string name="decline">Decline</string>
+    <string name="accept">Accept</string>
+    <string name="request">Request</string>
 </resources>
