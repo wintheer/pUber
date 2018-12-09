@@ -27,4 +27,8 @@
     <string name="yourLocation">This is you!</string>
     <string name="notEnoughPermissions">Not enough permissions!</string>
     <string name="default_notification_channel_id" translatable="false">1</string>
+    <string name="gps_not_found_title">No GPS.</string>
+    <string name="gps_not_found_message">Want to enable GPS?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>
