@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -20,7 +21,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.RemoteMessage;
-import com.google.firebase.messaging.Message;
+
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -40,6 +41,7 @@ public class DetailsFragment extends Fragment {
     private Button seeMoreButton, writeReviewButton, requestUsage, reportButton;
     private String currentEmail, token, owner;
     public static final String TAG = "DetailsFragment";
+    private String loggedInUser;
 
     public DetailsFragment() {
         // Required empty public constructor
@@ -52,6 +54,7 @@ public class DetailsFragment extends Fragment {
         getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         MapsActivity mapsActivity = (MapsActivity) getActivity();
         currentEmail = mapsActivity.getChosenToilet();
+        loggedInUser = Utilities.encodeUserEmail(mapsActivity.getCurrentUser().getEmail());
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_details, container, false);
@@ -66,7 +69,10 @@ public class DetailsFragment extends Fragment {
         //get database reference
         databaseRef = FirebaseDatabase.getInstance().getReference("toilets/" + currentEmail);
         owner = databaseRef.getKey();
-        ownerRef = FirebaseDatabase.getInstance().getReference("users/" + owner);
+
+        ownerRef = FirebaseDatabase.getInstance().getReference("users/" + currentEmail);
+
+
 
         //populate UI
         populateTextFields();
@@ -93,39 +99,12 @@ public class DetailsFragment extends Fragment {
     }
 
     private void requestUsage() {
-        Snackbar sb = Snackbar.make(getActivity().findViewById(android.R.id.content), "Usage request sent to "+toiletNameText.getText(),Snackbar.LENGTH_SHORT);
+        Snackbar sb = Snackbar.make(getActivity().findViewById(android.R.id.content), getResources().getString(R.string.requestSentTo)
+                + toiletNameText.getText().toString(),Snackbar.LENGTH_SHORT);
         sb.show();
 
-        ownerRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Object o = dataSnapshot.child("token").getValue();
-                //token = dataSnapshot.child("token").getValue();
-                Log.w(TAG,"Token: " + o.toString());
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-
-
-        Log.w(TAG,ownerRef.child("token").toString());
-        Log.w(TAG,"Owner of toilet is: " + owner);
-
-        //notification test code
-
-        String registrationToken = "cMFdlpzM7Pk:APA91bFXagGYo-w7wN7R2PTax1mTWMk9JRnSy_jBRatihToBQ5XfE5hhQKaMFTvQEKpal_5aGiZ5i_T7OsRMSbZWwMvMg1Ejo2OmSXpKHqWrWb2jVv0vaXQd7MIeXikKnivU1yptGXeu";
-
-        // See documentation on defining a message payload.
-        Message message = Message.builder()
-                .putData("score", "850")
-                .putData("time", "2:45")
-                .setToken(registrationToken)
-                .build();
-
+        ownerRef.child("notification").child("messageWaiting").setValue(true);
+        ownerRef.child("notification").child("usernameWhoRequestedToilet").setValue(loggedInUser);
     }
 
     private void report() {
@@ -153,42 +132,10 @@ public class DetailsFragment extends Fragment {
 
     }
 
-
-
     private void replaceFragment(Fragment fragment){
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.replace(R.id.fragmentFrameLayout, fragment );
         transaction.addToBackStack(null);
         transaction.commit();
     }
-
-
-
-
-  /*  // based on answer from Krupal Shah at https://stackoverflow.com/questions/32700818/how-to-open-a-fragment-on-button-click-from-a-fragment-in-android
-    @Override
-    public void onClick(View v) {
-        Fragment fragment = null;
-        switch (v.getId()) {
-            case R.id.button_details_seeMore:
-                fragment = new SeeMoreFragment();
-                replaceFragment(fragment);
-                break;
-
-            case R.id.button_details_writeReview:
-                fragment = new ReviewFragment();
-                replaceFragment(fragment);
-                break;
-        }
-    }
-
-    public void replaceFragment(Fragment someFragment) {
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.replace(R.id.frame_container, someFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
-    }
-
-*/
-
 }

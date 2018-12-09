@@ -31,4 +31,6 @@
     <string name="gps_not_found_message">Want to enable GPS?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="requestToilet">Someone wants to use your toilet!</string>
+    <string name="requestSentTo">Request sent to:</string>
 </resources>

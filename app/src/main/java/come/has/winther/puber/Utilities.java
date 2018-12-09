@@ -38,4 +38,22 @@ public class Utilities {
     public static String decodeUserEmail(String userEmail){
         return userEmail.replace(",",".");
     }
+
+    /**
+     * Returns the username who is cloests to the given location
+     */
+    public static String getClosestToilet(ArrayList<User> users, Location currentLocation) {
+
+        String usernameToReturn = "";
+        float lowestDistance = 999999999;
+
+        for (User u: users) {
+            float distance = currentLocation.distanceTo(u.getToiletLocation());
+            if (distance < lowestDistance) {
+                lowestDistance = distance;
+                usernameToReturn = u.getName();
+            }
+        }
+        return usernameToReturn;
+    }
 }

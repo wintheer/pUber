@@ -12,12 +12,24 @@ public class User {
     private float price;
     private String token;
 
+
+    private Notification notification;
+
     private String eMailAddress;
 
     public User(String name, String token, String eMailAddress) {
         this.name = name;
         this.token = token;
         this.eMailAddress = eMailAddress;
+        notification = new Notification(false, "none");
+    }
+
+    public Notification getNotification() {
+        return notification;
+    }
+
+    public void setNotification(Notification notification) {
+        this.notification = notification;
     }
 
     public void setName(String name) {

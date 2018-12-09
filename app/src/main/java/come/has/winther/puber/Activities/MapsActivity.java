@@ -3,10 +3,13 @@ package come.has.winther.puber.Activities;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.Context;
+import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.location.Location;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
@@ -25,9 +28,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 import come.has.winther.puber.Fragments.MyMapFragment;
+import come.has.winther.puber.NotificationService;
 import come.has.winther.puber.R;
 import come.has.winther.puber.Toilet;
 import come.has.winther.puber.User;
@@ -45,6 +48,10 @@ public class MapsActivity extends FragmentActivity implements MyMapFragment.OnDa
     private Location currentLocation;
     private DatabaseReference toiletRef;
     private ArrayList<Toilet> toilets;
+
+    private boolean serviceBound;
+    private ServiceConnection notificationServiceConnection;
+    private NotificationService notificationService;
 
     @NonNull
     public static Intent createIntent(@NonNull Context context, @Nullable IdpResponse response) {
@@ -117,15 +124,10 @@ public class MapsActivity extends FragmentActivity implements MyMapFragment.OnDa
 
         addUserToDb();
 
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            // The phone is in landscape mode, load the two fragments next to one another
-            Log.d(DEBUG, "Phone is in landscape mode.");
-        }
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            // The phone is in portrait mode, load one fragment
-            Log.d(DEBUG, "Phone is in portrait mode.");
-            loadFragment(new MyMapFragment());
-        }
+        setupConnectionToShareService();
+        bindToSNotificationService();
+
+        loadFragment(new MyMapFragment());
     }
 
     public ArrayList<Toilet> getToilets() {
@@ -151,10 +153,12 @@ public class MapsActivity extends FragmentActivity implements MyMapFragment.OnDa
                 if (dataSnapshot.exists()) {
                     // The user already exists
                     Log.d(DEBUG, fbUser.getEmail() + "Already exists");
+                    notificationService.setLoggedInUser(encodedEmail);
                 } else {
                     // The user does not exist, so lets create him!!
                     databaseRef.child(encodedEmail).setValue(dbUser);
                     Log.d(DEBUG, "Created user with ID: " + encodedEmail);
+                    notificationService.setLoggedInUser(encodedEmail);
                 }
             }
 
@@ -205,5 +209,29 @@ public class MapsActivity extends FragmentActivity implements MyMapFragment.OnDa
 
     public Location getCurrentLocation() {
         return this.currentLocation;
+    }
+
+    private void setupConnectionToShareService() {
+        notificationServiceConnection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                notificationService = ((NotificationService.NotificationServiceBinder)service).getService();
+                serviceBound = true;
+
+                Log.d("EditActivity", "ShareService connected!");
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                notificationService = null;
+                Log.d("EditActivity", "ShareService disconnected!");
+            }
+        };
+    }
+
+    public void bindToSNotificationService() {
+        bindService(new Intent(MapsActivity.this, NotificationService.class),
+                notificationServiceConnection, Context.BIND_AUTO_CREATE);
+        Log.d(DEBUG, "bound to service.");
     }
 }
