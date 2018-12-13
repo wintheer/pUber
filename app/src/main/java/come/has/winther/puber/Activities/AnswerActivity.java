@@ -62,7 +62,7 @@ public class AnswerActivity extends AppCompatActivity {
             usernameOfRequest = extras.getString("request");
             descriptionText = extras.getString("username");
 
-            String descriptionToShow = descriptionText + " " + getResources().getString(R.string.requestedToSeeYourInformation);
+            String descriptionToShow = usernameOfRequest + " " + getResources().getString(R.string.requestedToSeeYourInformation);
 
             descriptionTextView.setText(descriptionToShow);
 
